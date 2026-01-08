@@ -1,0 +1,1487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- ==========================
+         META & BASIC CONFIG
+         ========================== -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hospital Management System UI</title>
+
+    <!-- Google Font (optional but nice) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
+    <style>
+        /* ==========================
+           GLOBAL STYLES & RESETS
+           ========================== */
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            /* Color palette: hospital themed */
+            --color-bg: #22266;
+            --color-surface: #5;
+            --color-primary: #e51e71;
+            --color-primary-soft:#f5f9;
+            --color-accent: #a6265b;
+            --color-border: #ffd0dc;
+            --color-text-main: #1f2933;
+            --color-text-muted: #6b7280;
+
+            --radius-card: 14px;
+            --shadow-soft: 0 10px 30px rgba(15, 23, 42, 0.12);
+
+            --font-main: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Inter", sans-serif;
+        }
+
+        html, body {
+            height: 100%;
+        }
+
+        body {
+            font-family: var(--font-main);
+            background: radial-gradient(circle at top left, #e3f2fd, #e0f7fa 40%, #f5f9ff 80%);
+            color: var(--color-text-main);
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+        }
+
+        /* ==========================
+           APP WRAPPER
+           ========================== */
+
+        .app-wrapper {
+            min-height: 100vh;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 16px 32px;
+            display: flex;
+            flex-direction: column;
+            gap: 18px;
+        }
+
+        /* ==========================
+           HEADER / NAVIGATION
+           ========================== */
+
+        .main-header {
+            background-color: rgba(255, 255, 255, 0.96);
+            border-radius: var(--radius-card);
+            box-shadow: var(--shadow-soft);
+            padding: 10px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: sticky;
+            top: 8px;
+            z-index: 10;
+            backdrop-filter: blur(12px);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* CSS-only medical cross icon */
+        .logo-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #1e88e5, #26a69a);
+            position: relative;
+        }
+
+        .logo-icon::before,
+        .logo-icon::after {
+            content: "";
+            position: absolute;
+            background-color: #1f2933;
+            border-radius: 2px;
+        }
+
+        .logo-icon::before {
+            width: 70%;
+            height: 4px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .logo-icon::after {
+            width: 4px;
+            height: 70%;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .logo-text-title {
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--color-primary);
+        }
+
+        .logo-text-sub {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        .main-nav ul {
+            list-style: none;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .main-nav a {
+            text-decoration: none;
+            font-size: 0.85rem;
+            padding: 6px 12px;
+            border-radius: 999px;
+            color: var(--color-text-main);
+            background-color: transparent;
+            border: 1px solid transparent;
+            transition: background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
+        }
+
+        .main-nav a:hover {
+            background-color: var(--color-primary-soft);
+            color: var(--color-primary);
+            border-color: rgba(30, 136, 229, 0.3);
+            box-shadow: 0 2px 8px rgba(30, 136, 229, 0.2);
+            transform: translateY(-1px);
+        }
+
+        /* ==========================
+           GENERAL LAYOUT / SECTIONS
+           ========================== */
+
+        main {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .section {
+            background-color: transparent;
+        }
+
+        .section-header {
+            margin: 16px 4px 10px;
+        }
+
+        .section-header h2 {
+            font-size: 1.35rem;
+            margin-bottom: 4px;
+        }
+
+        .section-header p {
+            color: var(--color-text-muted);
+            font-size: 0.9rem;
+        }
+
+        /* Generic card style */
+        .card {
+            background-color: var(--color-surface);
+            border-radius: var(--radius-card);
+            padding: 18px 18px 20px;
+            box-shadow: var(--shadow-soft);
+            border: 1px solid rgba(226, 232, 240, 0.7);
+        }
+
+        .card-subtitle {
+            font-size: 1rem;
+            margin-bottom: 10px;
+        }
+
+        /* ==========================
+           HERO SECTION
+           ========================== */
+
+        .hero {
+            display: grid;
+            grid-template-columns: 3fr 2fr;
+            gap: 18px;
+            align-items: stretch;
+        }
+
+        .hero-left {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-card {
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 12px;
+            background: radial-gradient(circle at top left, rgba(30, 136, 229, 0.1), #ffffff);
+        }
+
+        .badge-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 4px 10px;
+            border-radius: 999px;
+            background-color: var(--color-primary-soft);
+            color: var(--color-primary);
+            font-size: 0.78rem;
+            font-weight: 600;
+        }
+
+        .badge-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 999px;
+            background: linear-gradient(135deg, #1e1, #26a69a);
+        }
+
+        .hero-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .hero-desc {
+            font-size: 0.95rem;
+            color: var(--color-text-muted);
+            max-width: 450px;
+        }
+
+        .hero-metrics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            margin-top: 4px;
+        }
+
+        .hero-metric {
+            padding: 8px 12px;
+            border-radius: 12px;
+            background-color: #26a69a;
+            border: 1px solid #1e88e5;
+            font-size: 0.85rem;
+        }
+
+        .hero-metric span {
+            display: block;
+        }
+
+        .hero-metric-strong {
+            font-weight: 700;
+            color: var(--color-primary);
+        }
+
+        .hero-image-card {
+            position: relative;
+            overflow: hidden;
+            padding: 0;
+        }
+
+        .hero-image-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            min-height: 200px;
+        }
+
+        .hero-image-wrapper img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .hero-image-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(145deg, rgba(30, 136, 229, 0.3), rgba(38, 166, 154, 0.3));
+            mix-blend-mode: soft-light;
+        }
+
+        .hero-image-label {
+            position: absolute;
+            left: 14px;
+            bottom: 14px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            background-color:#1e1(255, 255, 255, 0.9);
+            color: var(--color-primary);
+            font-size: 0.8rem;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .hero-image-label-dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 999px;
+            background: var(--color-accent);
+        }
+
+        /* ==========================
+           LOGIN SECTION
+           ========================== */
+
+        .login-section .login-card {
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .login-section .section-header {
+            text-align: center;
+            margin-top: 10px;
+        }
+
+        .login-section h2 {
+            font-size: 1.4rem;
+        }
+
+        .login-form {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .form-group label {
+            font-size: 0.9rem;
+            color: var(--color-text-main);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            border-radius: 8px;
+            border: 1px solid var(--color-border);
+            padding: 8px 10px;
+            font-size: 0.9rem;
+            outline: none;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+            background-color: #26a69a;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 2px #1e1(30, 136, 229, 0.18);
+            background-color: #1e1;
+        }
+
+        .form-row-between {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .checkbox-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            color: var(--color-text-muted);
+            cursor: pointer;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 14px;
+            height: 14px;
+        }
+
+        .link-small {
+            font-size: 0.85rem;
+            color: var(--color-primary);
+            text-decoration: none;
+        }
+
+        .link-small:hover {
+            text-decoration: underline;
+        }
+
+        /* Buttons */
+        .btn {
+            border-radius: 999px;
+            border: 1px solid transparent;
+            padding: 8px 16px;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: transform 0.1s ease, box-shadow 0.1s ease, background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--color-primary), var(--color-accent));
+            color: #1e1;
+            box-shadow: 0 4px 12px #1e1(30, 136, 229, 0.35);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px #1e1(30, 136, 229, 0.45);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border-color: var(--color-primary);
+            color: var(--color-primary);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--color-primary-soft);
+        }
+
+        .full-width {
+            width: 100%;
+        }
+
+        /* ==========================
+           DASHBOARD SECTION
+           ========================== */
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: 14px;
+        }
+
+        .dashboard-card {
+            position: relative;
+            overflow: hidden;
+            padding-top: 16px;
+        }
+
+        .dashboard-card::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background: radial-gradient(circle at top left, #1e1(30, 136, 229, 0.07), transparent 55%);
+            pointer-events: none;
+        }
+
+        .card-title {
+            font-size: 0.9rem;
+            color: var(--color-text-muted);
+            margin-bottom: 6px;
+        }
+
+        .card-metric {
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 4px;
+        }
+
+        .card-desc {
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        /* ==========================
+           TWO-COLUMN LAYOUT (FORMS + TABLES)
+           ========================== */
+
+        .two-column {
+            display: grid;
+            grid-template-columns: 2fr 3fr;
+            gap: 16px;
+        }
+
+        /* Grid form layout (for larger forms) */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px 16px;
+        }
+
+        .form-group.wide {
+            grid-column: 1 / -1;
+        }
+
+        .form-actions {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+            margin-top: 8px;
+        }
+
+        /* ==========================
+           TABLES (Doctors / Appointments / Records)
+           ========================== */
+
+        .table-wrapper {
+            max-width: 100%;
+            overflow-x: auto;
+            margin-top: 8px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            background-color: #1e1;
+        }
+
+        thead {
+            background-color: var(--color-primary-soft);
+        }
+
+        th, td {
+            padding: 8px 10px;
+            border-bottom: 1px solid #1e1;
+            text-align: left;
+            white-space: nowrap;
+        }
+
+        tbody tr:hover {
+            background-color: #1e1;
+        }
+
+        .table-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .toolbar-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+        }
+
+        .toolbar-badge {
+            font-size: 0.78rem;
+            padding: 4px 8px;
+            border-radius: 999px;
+            background-color: var(--color-primary-soft);
+            color: var(--color-primary);
+        }
+
+        /* ==========================
+           BILLING HIGHLIGHT
+           ========================== */
+
+        .billing-summary {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .billing-card {
+            padding: 10px;
+            border-radius: 10px;
+            background-color: #1e1;
+            border: 1px solid #1e1;
+            font-size: 0.85rem;
+        }
+
+        .billing-label {
+            font-size: 0.78rem;
+            color: var(--color-text-muted);
+        }
+
+        .billing-value {
+            font-weight: 600;
+            color: var(--color-primary);
+        }
+
+        /* ==========================
+           FOOTER
+           ========================== */
+
+        .main-footer {
+            margin-top: 16px;
+            padding: 10px;
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--color-text-muted);
+        }
+
+        /* ==========================
+           RESPONSIVE DESIGN
+           Tablets / Small Laptops
+           ========================== */
+
+        @media (max-width: 1024px) {
+            .hero {
+                grid-template-columns: 1.2fr 1.1fr;
+            }
+
+            .card-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+
+            .two-column {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* ==========================
+           RESPONSIVE DESIGN
+           Mobile / Small Tablets
+           ========================== */
+
+        @media (max-width: 768px) {
+            .app-wrapper {
+                padding: 10px 8px 20px;
+            }
+
+            .main-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 10px 12px;
+            }
+
+            .main-nav ul {
+                gap: 6px;
+                flex-wrap: wrap;
+            }
+
+            .main-nav a {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+
+            .hero {
+                grid-template-columns: 1fr;
+            }
+
+            .hero-image-card {
+                order: -1;
+            }
+
+            .section-header h2 {
+                font-size: 1.2rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .card-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .billing-summary {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-wrapper">
+        <!-- ==========================
+             HEADER / NAVBAR
+             ========================== -->
+        <header class="main-header">
+            <div class="logo">
+                <div class="logo-icon" aria-hidden="true"></div>
+                <div>
+                    <div class="logo-text-title">CityCare Hospital</div>
+                    <div class="logo-text-sub">Hospital Management System</div>
+                </div>
+            </div>
+
+            <nav class="main-nav" aria-label="Primary navigation">
+                <ul>
+                    <li><a href="#hero">Overview</a></li>
+                    <li><a href="#login">Login</a></li>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#patient-registration">Patients</a></li>
+                    <li><a href="#doctor-management">Doctors</a></li>
+                    <li><a href="#appointments">Appointments</a></li>
+                    <li><a href="#billing">Billing</a></li>
+                    <li><a href="#records">Records</a></li>
+                </ul>
+            </nav>
+        </header>
+
+        <main>
+            <!-- ==========================
+                 HERO / OVERVIEW SECTION
+                 ========================== -->
+            <section id="hero" class="section" aria-labelledby="hero-title">
+                <div class="hero">
+                    <!-- Left: Text / Overview -->
+                    <div class="hero-left">
+                        <article class="card hero-card">
+                            <span class="badge-pill">
+                                <span class="badge-dot" aria-hidden="true"></span>
+                                Smart, paperless & secure
+                            </span>
+
+                            <h1 id="hero-title" class="hero-title">
+                                All-in-one Hospital Management Dashboard
+                            </h1>
+
+                            <p class="hero-desc">
+                                Manage patients, doctors, appointments, billing and medical records
+                                from a single, clean and responsive interface designed for real-world hospitals.
+                            </p>
+
+                            <div class="hero-metrics" aria-label="High level stats">
+                                <div class="hero-metric">
+                                    <span class="hero-metric-strong">120+</span>
+                                    <span>Patients admitted today</span>
+                                </div>
+                                <div class="hero-metric">
+                                    <span class="hero-metric-strong">35</span>
+                                    <span>Doctors on duty</span>
+                                </div>
+                                <div class="hero-metric">
+                                    <span class="hero-metric-strong">98%</span>
+                                    <span>Bed occupancy</span>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+
+                    <!-- Right: Illustration (image via URL) -->
+                    <aside class="card hero-image-card" aria-label="Hospital staff illustration">
+                        <div class="hero-image-wrapper">
+                            <!-- Online image (no download required) -->
+                            <!-- Swapped to a reliable remote image URL and ensured it fits the card -->
+                            <img
+                                src="image.png"
+                                alt="Doctors and nurses working together in a hospital"
+                            >
+                            <div class="hero-image-overlay" aria-hidden="true"></div>
+                            <div class="hero-image-label">
+                                <span class="hero-image-label-dot"></span>
+                                ISO-certified care 24/7
+                            </div>
+                        </div>
+                    </aside>
+                </div>
+            </section>
+
+            <!-- ==========================
+                 LOGIN SECTION
+                 ========================== -->
+            <section id="login" class="section login-section" aria-labelledby="login-title">
+                <header class="section-header">
+                    <h2 id="login-title">Login – Admin / Doctor / Receptionist</h2>
+                    <p>Secure role-based access for different hospital staff members.</p>
+                </header>
+
+                <div class="card login-card" role="form" aria-label="Login form">
+                    <form class="login-form" action="#" method="post">
+                        <!-- Role selection -->
+                        <div class="form-group">
+                            <label for="role">Login as</label>
+                            <select id="role" name="role">
+                                <option value="admin">Admin</option>
+                                <option value="doctor">Doctor</option>
+                                <option value="receptionist">Receptionist</option>
+                            </select>
+                        </div>
+
+                        <!-- Username -->
+                        <div class="form-group">
+                            <label for="username">Username / Email</label>
+                            <input
+                                type="text"
+                                id="username"
+                                name="username"
+                                placeholder="e.g. dr.john@citycare.com"
+                                required
+                            >
+                        </div>
+
+                        <!-- Password -->
+                        <div class="form-group">
+                            <label for="password">Password</label>
+                            <input
+                                type="password"
+                                id="password"
+                                name="password"
+                                placeholder="Enter your password"
+                                required
+                            >
+                        </div>
+
+                        <!-- Remember + Forgot password -->
+                        <div class="form-row-between">
+                            <label class="checkbox-label">
+                                <input type="checkbox" name="remember">
+                                <span>Remember me</span>
+                            </label>
+                            <a href="#" class="link-small">Forgot password?</a>
+                        </div>
+
+                        <!-- Submit button -->
+                        <button type="submit" class="btn btn-primary full-width">
+                            Sign in to Dashboard
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ==========================
+                 DASHBOARD SECTION
+                 ========================== -->
+            <section id="dashboard" class="section" aria-labelledby="dashboard-title">
+                <header class="section-header">
+                    <h2 id="dashboard-title">Hospital Dashboard</h2>
+                    <p>Quick overview of hospital status and key metrics.</p>
+                </header>
+
+                <div class="card card-dashboard">
+                    <div class="card-grid">
+                        <article class="dashboard-card card">
+                            <h3 class="card-title">Total In-Patients</h3>
+                            <p class="card-metric">248</p>
+                            <p class="card-desc">Admitted across all departments.</p>
+                        </article>
+
+                        <article class="dashboard-card card">
+                            <h3 class="card-title">Out-Patients Today</h3>
+                            <p class="card-metric">412</p>
+                            <p class="card-desc">Registered in OPD counters.</p>
+                        </article>
+
+                        <article class="dashboard-card card">
+                            <h3 class="card-title">Surgeries Scheduled</h3>
+                            <p class="card-metric">27</p>
+                            <p class="card-desc">Operations planned for today.</p>
+                        </article>
+
+                        <article class="dashboard-card card">
+                            <h3 class="card-title">Available Beds</h3>
+                            <p class="card-metric">42</p>
+                            <p class="card-desc">Including ICU and general wards.</p>
+                        </article>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================
+                 PATIENT REGISTRATION
+                 ========================== -->
+            <section id="patient-registration" class="section" aria-labelledby="patient-title">
+                <header class="section-header">
+                    <h2 id="patient-title">Patient Registration</h2>
+                    <p>Register new patients quickly with essential details.</p>
+                </header>
+
+                <div class="card">
+                    <form class="form-grid" action="#" method="post" aria-label="Patient registration form">
+                        <!-- First column data -->
+                        <div class="form-group">
+                            <label for="patient-name">Full Name</label>
+                            <input
+                                type="text"
+                                id="patient-name"
+                                name="patient-name"
+                                placeholder="Patient full name"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient-age">Age</label>
+                            <input
+                                type="number"
+                                id="patient-age"
+                                name="patient-age"
+                                min="0"
+                                max="120"
+                                placeholder="e.g. 45"
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient-gender">Gender</label>
+                            <select id="patient-gender" name="patient-gender">
+                                <option value="">Select</option>
+                                <option value="female">Female</option>
+                                <option value="male">Male</option>
+                                <option value="other">Other</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient-phone">Contact Number</label>
+                            <input
+                                type="tel"
+                                id="patient-phone"
+                                name="patient-phone"
+                                placeholder="+91 98765 43210"
+                            >
+                        </div>
+
+                        <div class="form-group wide">
+                            <label for="patient-address">Address</label>
+                            <textarea
+                                id="patient-address"
+                                name="patient-address"
+                                rows="2"
+                                placeholder="Street, City, State, PIN"
+                            ></textarea>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient-dept">Department</label>
+                            <select id="patient-dept" name="patient-dept">
+                                <option value="">Select department</option>
+                                <option value="cardiology">Cardiology</option>
+                                <option value="orthopedics">Orthopedics</option>
+                                <option value="pediatrics">Pediatrics</option>
+                                <option value="neurology">Neurology</option>
+                                <option value="general">General Medicine</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="patient-type">Patient Type</label>
+                            <select id="patient-type" name="patient-type">
+                                <option value="out">Out-Patient (OPD)</option>
+                                <option value="in">In-Patient (IPD)</option>
+                                <option value="emergency">Emergency</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group wide">
+                            <label for="patient-notes">Clinical Notes</label>
+                            <textarea
+                                id="patient-notes"
+                                name="patient-notes"
+                                rows="2"
+                                placeholder="Brief notes, symptoms, or remarks"
+                            ></textarea>
+                        </div>
+
+                        <div class="form-actions wide">
+                            <button type="reset" class="btn btn-outline">Clear</button>
+                            <button type="submit" class="btn btn-primary">Save Patient</button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- ==========================
+                 DOCTOR MANAGEMENT
+                 ========================== -->
+            <section id="doctor-management" class="section" aria-labelledby="doctor-title">
+                <header class="section-header">
+                    <h2 id="doctor-title">Doctor Management</h2>
+                    <p>View and manage doctor details and their specializations.</p>
+                </header>
+
+                <div class="card two-column">
+                    <!-- Left: Small add-doctor form (UI only) -->
+                    <div>
+                        <h3 class="card-subtitle">Add / Update Doctor</h3>
+                        <form class="form-grid" action="#" method="post" aria-label="Doctor management form">
+                            <div class="form-group">
+                                <label for="doc-name">Doctor Name</label>
+                                <input
+                                    type="text"
+                                    id="doc-name"
+                                    name="doc-name"
+                                    placeholder="Dr. John Doe"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="doc-speciality">Specialization</label>
+                                <select id="doc-speciality" name="doc-speciality">
+                                    <option value="">Select</option>
+                                    <option value="cardiology">Cardiology</option>
+                                    <option value="orthopedics">Orthopedics</option>
+                                    <option value="gynecology">Gynecology</option>
+                                    <option value="pediatrics">Pediatrics</option>
+                                    <option value="radiology">Radiology</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="doc-phone">Contact Number</label>
+                                <input
+                                    type="tel"
+                                    id="doc-phone"
+                                    name="doc-phone"
+                                    placeholder="+91 90000 00000"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="doc-shift">Shift</label>
+                                <select id="doc-shift" name="doc-shift">
+                                    <option value="">Select</option>
+                                    <option value="morning">Morning</option>
+                                    <option value="evening">Evening</option>
+                                    <option value="night">Night</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions wide">
+                                <button type="reset" class="btn btn-outline">Reset</button>
+                                <button type="submit" class="btn btn-primary">Save Doctor</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Doctor list table -->
+                    <div>
+                        <div class="table-toolbar">
+                            <div>
+                                <div class="toolbar-title">Doctors on Panel</div>
+                                <div class="toolbar-badge">Sample data for UI demonstration</div>
+                            </div>
+                        </div>
+
+                        <div class="table-wrapper" aria-label="List of doctors">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Specialization</th>
+                                        <th>Experience</th>
+                                        <th>Contact</th>
+                                        <th>Shift</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Dr. A. Sharma</td>
+                                        <td>Cardiology</td>
+                                        <td>12 yrs</td>
+                                        <td>+91 98765 10001</td>
+                                        <td>Morning</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dr. R. Thomas</td>
+                                        <td>Orthopedics</td>
+                                        <td>9 yrs</td>
+                                        <td>+91 98765 10002</td>
+                                        <td>Evening</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dr. N. Patel</td>
+                                        <td>Pediatrics</td>
+                                        <td>7 yrs</td>
+                                        <td>+91 98765 10003</td>
+                                        <td>Morning</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Dr. S. Gupta</td>
+                                        <td>Neurology</td>
+                                        <td>10 yrs</td>
+                                        <td>+91 98765 10004</td>
+                                        <td>Night</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================
+                 APPOINTMENT SCHEDULING
+                 ========================== -->
+            <section id="appointments" class="section" aria-labelledby="appointment-title">
+                <header class="section-header">
+                    <h2 id="appointment-title">Appointment Scheduling</h2>
+                    <p>Schedule and view upcoming appointments for patients.</p>
+                </header>
+
+                <div class="card two-column">
+                    <!-- Left: Appointment booking form -->
+                    <div>
+                        <h3 class="card-subtitle">Book New Appointment</h3>
+                        <form class="form-grid" action="#" method="post" aria-label="Appointment booking form">
+                            <div class="form-group">
+                                <label for="appt-patient">Patient Name / ID</label>
+                                <input
+                                    type="text"
+                                    id="appt-patient"
+                                    name="appt-patient"
+                                    placeholder="e.g. P-10234 / John Doe"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appt-doctor">Doctor</label>
+                                <select id="appt-doctor" name="appt-doctor">
+                                    <option value="">Select</option>
+                                    <option value="sharma">Dr. A. Sharma – Cardiology</option>
+                                    <option value="thomas">Dr. R. Thomas – Orthopedics</option>
+                                    <option value="patel">Dr. N. Patel – Pediatrics</option>
+                                    <option value="gupta">Dr. S. Gupta – Neurology</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appt-date">Date</label>
+                                <input type="date" id="appt-date" name="appt-date">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="appt-time">Time</label>
+                                <input type="time" id="appt-time" name="appt-time">
+                            </div>
+
+                            <div class="form-group wide">
+                                <label for="appt-reason">Reason / Notes</label>
+                                <textarea
+                                    id="appt-reason"
+                                    name="appt-reason"
+                                    rows="2"
+                                    placeholder="Reason for visit"
+                                ></textarea>
+                            </div>
+
+                            <div class="form-actions wide">
+                                <button type="reset" class="btn btn-outline">Clear</button>
+                                <button type="submit" class="btn btn-primary">Schedule</button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Upcoming appointments table -->
+                    <div>
+                        <div class="table-toolbar">
+                            <div>
+                                <div class="toolbar-title">Upcoming Appointments</div>
+                                <div class="toolbar-badge">UI-only sample list</div>
+                            </div>
+                        </div>
+
+                        <div class="table-wrapper" aria-label="Upcoming appointments">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Patient</th>
+                                        <th>Doctor</th>
+                                        <th>Dept.</th>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>P-10234 John Doe</td>
+                                        <td>Dr. A. Sharma</td>
+                                        <td>Cardiology</td>
+                                        <td>08 Jan 2026</td>
+                                        <td>09:30 AM</td>
+                                    </tr>
+                                    <tr>
+                                        <td>P-10451 Riya Mehta</td>
+                                        <td>Dr. N. Patel</td>
+                                        <td>Pediatrics</td>
+                                        <td>08 Jan 2026</td>
+                                        <td>11:15 AM</td>
+                                    </tr>
+                                    <tr>
+                                        <td>P-10322 Suresh Kumar</td>
+                                        <td>Dr. R. Thomas</td>
+                                        <td>Orthopedics</td>
+                                        <td>08 Jan 2026</td>
+                                        <td>02:00 PM</td>
+                                    </tr>
+                                    <tr>
+                                        <td>P-10590 Anita Rao</td>
+                                        <td>Dr. S. Gupta</td>
+                                        <td>Neurology</td>
+                                        <td>09 Jan 2026</td>
+                                        <td>10:45 AM</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==========================
+                 BILLING & PAYMENT
+                 ========================== -->
+            <section id="billing" class="section" aria-labelledby="billing-title">
+                <header class="section-header">
+                    <h2 id="billing-title">Billing & Payment</h2>
+                    <p>Prepare invoices, apply discounts and record payments.</p>
+                </header>
+
+            <div class="card">
+                <!-- Summary highlights -->
+                <div class="billing-summary" aria-label="Billing summary cards">
+                    <div class="billing-card">
+                        <div class="billing-label">Today’s Billing (OP + IP)</div>
+                        <div class="billing-value">₹ 4,52,300</div>
+                    </div>
+                    <div class="billing-card">
+                        <div class="billing-label">Pending Payments</div>
+                        <div class="billing-value">₹ 78,450</div>
+                    </div>
+                    <div class="billing-card">
+                        <div class="billing-label">Insurance Claims Initiated</div>
+                        <div class="billing-value">32</div>
+                    </div>
+                </div>
+
+                <!-- Billing form -->
+                <form class="form-grid" action="#" method="post" aria-label="Billing form">
+                    <div class="form-group">
+                        <label for="bill-patient-id">Patient ID</label>
+                        <input
+                            type="text"
+                            id="bill-patient-id"
+                            name="bill-patient-id"
+                            placeholder="e.g. P-10234"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bill-patient-name">Patient Name</label>
+                        <input
+                            type="text"
+                            id="bill-patient-name"
+                            name="bill-patient-name"
+                            placeholder="John Doe"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bill-dept">Department</label>
+                        <select id="bill-dept" name="bill-dept">
+                            <option value="">Select</option>
+                            <option value="cardiology">Cardiology</option>
+                            <option value="orthopedics">Orthopedics</option>
+                            <option value="pediatrics">Pediatrics</option>
+                            <option value="icu">ICU</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bill-type">Billing Type</label>
+                        <select id="bill-type" name="bill-type">
+                            <option value="opd">OPD</option>
+                            <option value="ipd">IPD</option>
+                            <option value="surgery">Surgery</option>
+                            <option value="pharmacy">Pharmacy</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bill-amount">Total Amount (₹)</label>
+                        <input
+                            type="number"
+                            id="bill-amount"
+                            name="bill-amount"
+                            min="0"
+                            step="0.01"
+                            placeholder="0.00"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bill-discount">Discount (%)</label>
+                        <input
+                            type="number"
+                            id="bill-discount"
+                            name="bill-discount"
+                            min="0"
+                            max="100"
+                            placeholder="0"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bill-mode">Payment Mode</label>
+                        <select id="bill-mode" name="bill-mode">
+                            <option value="cash">Cash</option>
+                            <option value="card">Card</option>
+                            <option value="upi">UPI</option>
+                            <option value="insurance">Insurance</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group wide">
+                        <label for="bill-remarks">Remarks</label>
+                        <textarea
+                            id="bill-remarks"
+                            name="bill-remarks"
+                            rows="2"
+                            placeholder="Additional notes or references"
+                        ></textarea>
+                    </div>
+
+                    <div class="form-actions wide">
+                        <button type="reset" class="btn btn-outline">Clear</button>
+                        <button type="submit" class="btn btn-primary">Generate Bill</button>
+                    </div>
+                </form>
+            </div>
+            </section>
+
+            <!-- ==========================
+                 MEDICAL RECORDS VIEW
+                 ========================== -->
+            <section id="records" class="section" aria-labelledby="records-title">
+                <header class="section-header">
+                    <h2 id="records-title">Medical Records View</h2>
+                    <p>Browse clinical records and visit history for patients.</p>
+                </header>
+
+                <div class="card two-column">
+                    <!-- Left: Filter / search UI (no JS) -->
+                    <div>
+                        <h3 class="card-subtitle">Search Records</h3>
+                        <form class="form-grid" action="#" method="get" aria-label="Medical records search form">
+                            <div class="form-group">
+                                <label for="rec-patient-id">Patient ID</label>
+                                <input
+                                    type="text"
+                                    id="rec-patient-id"
+                                    name="rec-patient-id"
+                                    placeholder="e.g. P-10234"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="rec-patient-name">Patient Name</label>
+                                <input
+                                    type="text"
+                                    id="rec-patient-name"
+                                    name="rec-patient-name"
+                                    placeholder="John Doe"
+                                >
+                            </div>
+
+                            <div class="form-group">
+                                <label for="rec-from">From Date</label>
+                                <input type="date" id="rec-from" name="rec-from">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="rec-to">To Date</label>
+                                <input type="date" id="rec-to" name="rec-to">
+                            </div>
+
+                            <div class="form-group wide">
+                                <label for="rec-dept">Department</label>
+                                <select id="rec-dept" name="rec-dept">
+                                    <option value="">All departments</option>
+                                    <option value="cardiology">Cardiology</option>
+                                    <option value="orthopedics">Orthopedics</option>
+                                    <option value="pediatrics">Pediatrics</option>
+                                    <option value="neurology">Neurology</option>
+                                    <option value="icu">ICU</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions wide">
+                                <button type="submit" class="btn btn-primary full-width">
+                                    View Records
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Right: Records table -->
+                    <div>
+                        <div class="table-toolbar">
+                            <div>
+                                <div class="toolbar-title">Recent Medical Records</div>
+                                <div class="toolbar-badge">Sample records for UI design</div>
+                            </div>
+                        </div>
+
+                        <div class="table-wrapper" aria-label="Medical records list">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Record ID</th>
+                                        <th>Patient</th>
+                                        <th>Dept.</th>
+                                        <th>Doctor</th>
+                                        <th>Date</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>MR-2301</td>
+                                        <td>P-10234 John Doe</td>
+                                        <td>Cardiology</td>
+                                        <td>Dr. A. Sharma</td>
+                                        <td>06 Jan 2026</td>
+                                        <td>Discharged</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MR-2302</td>
+                                        <td>P-10590 Anita Rao</td>
+                                        <td>Neurology</td>
+                                        <td>Dr. S. Gupta</td>
+                                        <td>07 Jan 2026</td>
+                                        <td>Under observation</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MR-2303</td>
+                                        <td>P-10451 Riya Mehta</td>
+                                        <td>Pediatrics</td>
+                                        <td>Dr. N. Patel</td>
+                                        <td>05 Jan 2026</td>
+                                        <td>Follow-up</td>
+                                    </tr>
+                                    <tr>
+                                        <td>MR-2304</td>
+                                        <td>P-10322 Suresh Kumar</td>
+                                        <td>Orthopedics</td>
+                                        <td>Dr. R. Thomas</td>
+                                        <td>04 Jan 2026</td>
+                                        <td>Discharged</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- ==========================
+             FOOTER
+             ========================== -->
+        <footer class="main-footer">
+            © 2026 CityCare Hospital Management System UI &middot; Designed for academic / mini project use.
+        </footer>
+    </div>
+</body>
+</html>
